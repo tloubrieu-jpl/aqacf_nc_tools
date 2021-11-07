@@ -44,7 +44,7 @@ def add_time_dimension_to_variable(input, output, variable, time_dimension):
 
 def add_time_in_file(file: str, date_pattern: str, out_dir: str, up_to=-1):
     file_name = os.path.basename(file)
-    start_d = datetime.strptime(file_name[:up_to], date_pattern).astimezone(pytz.UTC)
+    start_d = datetime.strptime(file_name[:up_to], date_pattern)
     #end_d = start_d.replace(year=start_d.year+1)
     #d = start_d + (end_d - start_d)/2
     d = start_d
@@ -52,8 +52,8 @@ def add_time_in_file(file: str, date_pattern: str, out_dir: str, up_to=-1):
     dataset_input = nc.Dataset(file, 'r', format="NETCDF4")
     dataset_output = nc.Dataset(os.path.join(out_dir, file_name), 'w', format='NETCDF4')
     dim_time = add_time_variable(dataset_output, d)
-    copy_dimension_and_variable(dataset_input, dataset_output, except_variables=['PM25'])
-    add_time_dimension_to_variable(dataset_input, dataset_output, 'PM25', dim_time)
+    copy_dimension_and_variable(dataset_input, dataset_output, except_variables=['GWRPM25'])
+    add_time_dimension_to_variable(dataset_input, dataset_output, 'GWRPM25', dim_time)
 
     dataset_input.close()
     dataset_output.close()
@@ -62,11 +62,11 @@ def add_time_in_file(file: str, date_pattern: str, out_dir: str, up_to=-1):
 def add_time_in_dir(in_dir, out_dir):
     file_pattern = os.path.join(in_dir, '*.nc')
     for file in glob.glob(file_pattern):
-        add_time_in_file(file, 'V4NA03_PM25_NA_%Y%M_', out_dir, up_to=22)
+        add_time_in_file(file, 'V5GL01.HybridPM25.NorthAmerica.%Y%m-', out_dir, up_to=38)
 
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    add_time_in_dir('/Users/loubrieu/Documents/sdap/PM25', '/Users/loubrieu/Documents/sdap/PM25_withtime')
+    add_time_in_dir('/Users/loubrieu/Downloads/Monthly', '/Users/loubrieu/Documents/sdap/PM25_withtime_monthly')
 
 
